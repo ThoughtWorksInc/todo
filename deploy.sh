@@ -13,7 +13,7 @@ eval "$(ssh-agent -s)" &&
 chmod 600 ./secret/id_rsa &&
 ssh-add ./secret/id_rsa &&
 
-git pull origin gh-pages &&
+git pull --no-edit origin gh-pages &&
 sbt "set scalaJSStage in js := FullOptStage" indexHtml &&
 git rm --ignore-unmatch deploy.sh .travis.yml &&
 git add . &&
