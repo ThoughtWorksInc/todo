@@ -56,18 +56,18 @@ import org.scalajs.dom.raw._
   @dom def header = {
     <header className="header">
       <h1>todos</h1>
-			<input className="new-todo" autofocus={true} placeholder="What needs to be done?" onkeydown={ event: KeyboardEvent =>
-			  event.keyCode match {
-			    case KeyCode.Enter =>
+  		<input className="new-todo" autofocus={true} placeholder="What needs to be done?" onkeydown={ event: KeyboardEvent =>
+  		  event.keyCode match {
+  		    case KeyCode.Enter =>
             dom.currentTarget[HTMLInputElement].value.trim match {
               case "" =>
               case title =>
                 allTodos.get += new Todo(title, false)
                 dom.currentTarget[HTMLInputElement].value = ""
             }
-			    case _ =>
-			  }
-			}/>
+  		    case _ =>
+  		  }
+  		}/>
     </header>
   }
 
