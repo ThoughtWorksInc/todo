@@ -1,3 +1,18 @@
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot/
+
+language: scala
+
+jdk:
+  - oraclejdk8
+
+before_cache:
+  - find $HOME/.sbt -name '*.lock' | xargs rm
+  - find $HOME/.ivy2 -name 'ivydata-*.properties' | xargs rm
 
 before_deploy:
   - travis_retry git clone --depth=1 $secret_git ./secret
@@ -7,6 +22,5 @@ deploy:
   provider: script
   script: ./deploy.sh
   on:
-    jdk: openjdk7
     condition: -e ./deploy.sh
     all_branches: true
