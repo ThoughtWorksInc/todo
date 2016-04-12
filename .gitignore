@@ -183,3 +183,7 @@ local.properties
 .texlipse
 
 # Created by .ignore support plugin (hsz.mobi)
+
+# Files created for deployment
+secret/
+local.sbt
