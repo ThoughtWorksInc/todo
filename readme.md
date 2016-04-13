@@ -27,10 +27,17 @@ Enjoy it!
 }
 ```
 
+## About this application
+
+This application is one of the example implementations of [TodoMVC](http://todomvc.com/).
+The DEMO is deployed under [its Github Page](https://thoughtworksinc.github.io/todo),
+and the source code can be found on the [project page](https://github.com/ThoughtWorksInc/todo).
+
+To build this application, install [sbt](http://www.scala-sbt.org/) and execute the shell command `sbt indexHtml` at root of this code base.
+
 ## Links
 
 * [Project Page](https://github.com/ThoughtWorksInc/Binding.scala)
 * [API documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/thoughtworks/binding/unidoc_2.11/4.0.1/unidoc_2.11-4.0.1-javadoc.jar/!/com/thoughtworks/binding/package.html)
 * [Other live DEMOs](https://thoughtworksinc.github.io/Binding.scala/)
 * [Chat on Gitter](https://gitter.im/ThoughtWorksInc/Binding.scala)
-* [Standalone repository of this TodoMVC application](https://github.com/ThoughtWorksInc/todo)
