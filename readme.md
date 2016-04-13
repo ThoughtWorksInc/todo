@@ -29,7 +29,7 @@ only one source file, 150 lines of code!
 
 1. Download and install [sbt](http://www.scala-sbt.org/)
 2. Clone this repository `git clone https://github.com/ThoughtWorksInc/todo.git`
-3. Execute the shell command `sbt indexHtml` at root of this code base.
+3. Execute the shell command `sbt indexHtml` at the base directory of this code base.
 4. Open the generated `index.html` in your browser. Enjoy it! 😋
 
 ## Links
