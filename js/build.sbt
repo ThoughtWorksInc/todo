@@ -1,4 +1,4 @@
-enablePlugins(ScalaJSPlugin)
+enablePlugins(ScalaJsMap)
 
 libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "4.0.2"
 
