@@ -12,7 +12,6 @@ import upickle.default._
 @JSExport object Main {
 
   final class Todo(val title: String, val completed: Boolean)
-
   object Todo {
     def apply(title: String, completed: Boolean) = new Todo(title, completed)
     def unapply(todo: Todo) = Option((todo.title, todo.completed))
