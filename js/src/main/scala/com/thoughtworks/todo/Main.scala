@@ -81,21 +81,23 @@ import upickle.default._
           allTodos.get(allTodos.get.indexOf(todo)) = new Todo(trimmedTitle, todo.completed)
       }
     }
-    val edit = <input className="edit" value={ todo.title } onblur={ 
-      if (suppressOnBlur.each) { _: Any =>
-    } else { _: Any =>
-      submit(dom.currentTarget[HTMLInputElement].value)
-      }
-    } onkeydown={ event: KeyboardEvent =>
-      event.keyCode match {
-        case KeyCode.Escape =>
-          suppressOnBlur := true
-          editingTodo := None
-        case KeyCode.Enter =>
-          submit(dom.currentTarget[HTMLInputElement].value)
-        case _ =>
-      }
-    }/>;
+    val edit = <input className="edit" value={ todo.title }
+                      onblur={ 
+                        if (suppressOnBlur.each) { _: Any =>
+                        } else { _: Any =>
+                          submit(dom.currentTarget[HTMLInputElement].value)
+                        }
+                      }
+                      onkeydown={ event: KeyboardEvent =>
+                        event.keyCode match {
+                          case KeyCode.Escape =>
+                            suppressOnBlur := true
+                            editingTodo := None
+                          case KeyCode.Enter =>
+                            submit(dom.currentTarget[HTMLInputElement].value)
+                          case _ =>
+                        }
+                      } />;
     <li className={s"${if (todo.completed) "completed" else ""} ${if (editingTodo.each.contains(todo)) "editing" else ""}"}>
       <div className="view">
         <input className="toggle" type="checkbox" checked={todo.completed} onclick={_: Any =>
