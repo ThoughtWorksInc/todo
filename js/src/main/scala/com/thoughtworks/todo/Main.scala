@@ -43,9 +43,9 @@ import upickle.default._
     val completed = TodoList("Completed", "#/completed", for {todo <- allTodos if todo.completed} yield todo)
     val todoLists = Seq(all, active, completed)
 
-    def getCurrentTodoList = todoLists.find(_.hash == location.hash).getOrElse(all)
+    def getCurrentTodoList = todoLists.find(_.hash == window.location.hash).getOrElse(all)
     val currentTodoList = Var(getCurrentTodoList)
-    @dom val hashBinding = location.hash = currentTodoList.each.hash
+    @dom val hashBinding = window.location.hash = currentTodoList.each.hash
     hashBinding.watch()
     window.onhashchange = { _: Any => currentTodoList := getCurrentTodoList }
   }

@@ -1,6 +1,6 @@
 enablePlugins(ScalaJsMap)
 
-libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "4.0.2"
+libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "5.4.0"
 
 libraryDependencies += "com.lihaoyi" %%% "upickle" % "0.3.9"
 
