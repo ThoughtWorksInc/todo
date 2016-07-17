@@ -112,8 +112,11 @@ import upickle.default._
 
   @dom def mainSection = <section class="main" style:display={if (allTodos.length.each == 0) "none" else ""}>
     <input type="checkbox" class="toggle-all" checked={active.items.length.each == 0} onclick={_: Any =>
-    val newTodos = for {todo <- allTodos.get} yield new Todo(todo.title, dom.currentTarget[HTMLInputElement].checked)
-      allTodos.reset(newTodos: _*)
+      for ((todo, i) <- allTodos.get.zipWithIndex) {
+        if (todo.completed != dom.currentTarget[HTMLInputElement].checked) {
+          allTodos.get(i) = new Todo(todo.title, dom.currentTarget[HTMLInputElement].checked)
+        }
+      }
     }/>
     <label htmlFor="toggle-all">Mark all as complete</label>
     <ul class="todo-list">{ for { todo <- currentTodoList.each.items } yield todoListItem(todo).each }</ul>
@@ -130,7 +133,7 @@ import upickle.default._
     <ul class="filters">{ for { todoList <- Constants(todoLists: _*) } yield filterListItem(todoList).each }</ul>
     <button class="clear-completed"
             style:visibility={if (completed.items.length.each == 0) "hidden" else "visible"}
-            onclick={_: Any => allTodos.reset((for {todo <- allTodos.get if !todo.completed} yield todo): _*)}>
+            onclick={_: Any => allTodos.get --= (for {todo <- allTodos.get if todo.completed} yield todo) }>
       Clear completed
     </button>
   </footer>
