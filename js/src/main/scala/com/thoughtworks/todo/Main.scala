@@ -41,7 +41,7 @@ import upickle.default._
     val currentTodoList = Var(getCurrentTodoList)
     @dom val hashBinding: Binding[Unit] = window.location.hash = currentTodoList.bind.hash
     hashBinding.watch()
-    window.onhashchange = { _: Any => currentTodoList := getCurrentTodoList }
+    window.onhashchange = { _: Event => currentTodoList := getCurrentTodoList }
   }
   import Models._
 
@@ -65,6 +65,8 @@ import upickle.default._
   }
 
   @dom def todoListItem(todo: Todo) = {
+    // onblur is not only triggered by user interaction, but also triggered by programmatic DOM changes.
+    // In order to suppress this behavior, we have to replace the onblur event listener to a dummy handler before programmatic DOM changes.
     val suppressOnBlur = Var(false)
     def ignoreEvent = { _: Event => }
     def submit = { event: Event =>
@@ -90,18 +92,18 @@ import upickle.default._
     val edit = <input class="edit" value={ todo.title } onblur={if (suppressOnBlur.bind) ignoreEvent else submit} onkeydown={keyDownHandler} />;
     <li class={s"${if (todo.completed) "completed" else ""} ${if (editingTodo.bind.contains(todo)) "editing" else ""}"}>
       <div class="view">
-        <input class="toggle" type="checkbox" checked={todo.completed} onclick={_: Any =>
+        <input class="toggle" type="checkbox" checked={todo.completed} onclick={_: Event =>
           allTodos.get(allTodos.get.indexOf(todo)) = new Todo(todo.title, dom.currentTarget[HTMLInputElement].checked)
         }/>
-        <label ondblclick={ _: Any => editingTodo := Some(todo); edit.focus() }>{ todo.title }</label>
-        <button class="destroy" onclick={_: Any => allTodos.get.remove(allTodos.get.indexOf(todo))}></button>
+        <label ondblclick={ _: Event => editingTodo := Some(todo); edit.focus() }>{ todo.title }</label>
+        <button class="destroy" onclick={_: Event => allTodos.get.remove(allTodos.get.indexOf(todo))}></button>
       </div>
       { edit }
     </li>
   }
 
   @dom def mainSection = <section class="main" style:display={if (allTodos.length.bind == 0) "none" else ""}>
-    <input type="checkbox" class="toggle-all" checked={active.items.length.bind == 0} onclick={_: Any =>
+    <input type="checkbox" class="toggle-all" checked={active.items.length.bind == 0} onclick={_: Event =>
       for ((todo, i) <- allTodos.get.zipWithIndex) {
         if (todo.completed != dom.currentTarget[HTMLInputElement].checked) {
           allTodos.get(i) = new Todo(todo.title, dom.currentTarget[HTMLInputElement].checked)
@@ -123,7 +125,7 @@ import upickle.default._
     <ul class="filters">{ for { todoList <- Constants(todoLists: _*) } yield filterListItem(todoList).bind }</ul>
     <button class="clear-completed"
             style:visibility={if (completed.items.length.bind == 0) "hidden" else "visible"}
-            onclick={_: Any => allTodos.get --= (for {todo <- allTodos.get if todo.completed} yield todo) }>
+            onclick={_: Event => allTodos.get --= (for {todo <- allTodos.get if todo.completed} yield todo) }>
       Clear completed
     </button>
   </footer>
