@@ -11,6 +11,7 @@ import upickle.default._
 
 @JSExport object Main {
 
+  /** @note [[Todo]] is not a case class because we want to distinguish two [[Todo]]s with the same content */
   final class Todo(val title: String, val completed: Boolean)
   object Todo {
     def apply(title: String, completed: Boolean) = new Todo(title, completed)
