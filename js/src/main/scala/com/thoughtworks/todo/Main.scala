@@ -46,20 +46,21 @@ import upickle.default._
   import Models._
 
   @dom def header = {
-    <header class="header">
-      <h1>todos</h1>
-      <input class="new-todo" autofocus={true} placeholder="What needs to be done?" onkeydown={event: KeyboardEvent =>
-      event.keyCode match {
-        case KeyCode.Enter =>
-          dom.currentTarget[HTMLInputElement].value.trim match {
+    val keyDownHandler = { event: KeyboardEvent =>
+      (event.currentTarget, event.keyCode) match {
+        case (input: HTMLInputElement, KeyCode.Enter) =>
+          input.value.trim match {
             case "" =>
             case title =>
-              allTodos.get += new Todo(title, false)
-              dom.currentTarget[HTMLInputElement].value = ""
+              allTodos.get += Todo(title, completed = false)
+              input.value = ""
           }
         case _ =>
-        }
-      }/>
+      }
+    }
+    <header class="header">
+      <h1>todos</h1>
+      <input class="new-todo" autofocus={true} placeholder="What needs to be done?" onkeydown={keyDownHandler}/>
     </header>
   }
 
