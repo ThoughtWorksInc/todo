@@ -1,5 +1,6 @@
 package com.thoughtworks.todo
 
+import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding._
 import com.thoughtworks.binding.dom
 import scala.collection.GenSeq
@@ -44,7 +45,7 @@ import upickle.default._
 
     def getCurrentTodoList = todoLists.find(_.hash == window.location.hash).getOrElse(all)
     val currentTodoList = Var(getCurrentTodoList)
-    @dom val hashBinding = window.location.hash = currentTodoList.each.hash
+    @dom val hashBinding: Binding[Unit] = window.location.hash = currentTodoList.each.hash
     hashBinding.watch()
     window.onhashchange = { _: Any => currentTodoList := getCurrentTodoList }
   }
