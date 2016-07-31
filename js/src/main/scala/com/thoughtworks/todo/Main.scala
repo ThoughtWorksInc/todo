@@ -3,7 +3,6 @@ package com.thoughtworks.todo
 import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding._
 import com.thoughtworks.binding.dom
-import scala.collection.GenSeq
 import scala.scalajs.js.annotation.JSExport
 import org.scalajs.dom._
 import org.scalajs.dom.ext._
