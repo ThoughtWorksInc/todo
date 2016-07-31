@@ -134,11 +134,11 @@ import upickle.default._
 
   @dom def todoapp = {
     <section class="todoapp">{ header.bind }{ mainSection.bind }{ footer.bind }</section>
-      <footer class="info">
-        <p>Double-click to edit a todo</p>
-      <p>Written by <a href="https://github.com/atry">Yang Bo</a></p>
-      <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
-      </footer>
+    <footer class="info">
+      <p>Double-click to edit a todo</p>
+    <p>Written by <a href="https://github.com/atry">Yang Bo</a></p>
+    <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+    </footer>
   }
 
   @JSExport def main() = dom.render(document.body, todoapp)
