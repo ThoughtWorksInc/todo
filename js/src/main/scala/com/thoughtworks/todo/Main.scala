@@ -21,11 +21,9 @@ import upickle.default._
   final case class TodoList(text: String, hash: String, items: BindingSeq[Todo])
 
   object Models {
-    def load() = LocalStorage("todos-binding.scala") match {
-      case None => Seq()
-      case Some(json) => read[Seq[Todo]](json)
-    }
-    def save(todos: Seq[Todo]) = LocalStorage("todos-binding.scala") = write(todos)
+    val LocalStorageName = "todos-binding.scala"
+    def load() = LocalStorage(LocalStorageName).toSeq.flatMap(read[Seq[Todo]])
+    def save(todos: Seq[Todo]) = LocalStorage(LocalStorageName) = write(todos)
 
     val allTodos = Vars[Todo](load(): _*)
 
