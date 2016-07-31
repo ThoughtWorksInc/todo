@@ -40,7 +40,7 @@ import upickle.default._
 
     def getCurrentTodoList = todoLists.find(_.hash == window.location.hash).getOrElse(all)
     val currentTodoList = Var(getCurrentTodoList)
-    @dom val hashBinding: Binding[Unit] = window.location.hash = currentTodoList.each.hash
+    @dom val hashBinding: Binding[Unit] = window.location.hash = currentTodoList.bind.hash
     hashBinding.watch()
     window.onhashchange = { _: Any => currentTodoList := getCurrentTodoList }
   }
@@ -78,7 +78,7 @@ import upickle.default._
     }
     val edit = <input class="edit" value={ todo.title }
                       onblur={ 
-                        if (suppressOnBlur.each) { _: Any =>
+                        if (suppressOnBlur.bind) { _: Any =>
                         } else { _: Any =>
                           submit(dom.currentTarget[HTMLInputElement].value)
                         }
@@ -93,7 +93,7 @@ import upickle.default._
                           case _ =>
                         }
                       } />;
-    <li class={s"${if (todo.completed) "completed" else ""} ${if (editingTodo.each.contains(todo)) "editing" else ""}"}>
+    <li class={s"${if (todo.completed) "completed" else ""} ${if (editingTodo.bind.contains(todo)) "editing" else ""}"}>
       <div class="view">
         <input class="toggle" type="checkbox" checked={todo.completed} onclick={_: Any =>
           allTodos.get(allTodos.get.indexOf(todo)) = new Todo(todo.title, dom.currentTarget[HTMLInputElement].checked)
@@ -105,8 +105,8 @@ import upickle.default._
     </li>
   }
 
-  @dom def mainSection = <section class="main" style:display={if (allTodos.length.each == 0) "none" else ""}>
-    <input type="checkbox" class="toggle-all" checked={active.items.length.each == 0} onclick={_: Any =>
+  @dom def mainSection = <section class="main" style:display={if (allTodos.length.bind == 0) "none" else ""}>
+    <input type="checkbox" class="toggle-all" checked={active.items.length.bind == 0} onclick={_: Any =>
       for ((todo, i) <- allTodos.get.zipWithIndex) {
         if (todo.completed != dom.currentTarget[HTMLInputElement].checked) {
           allTodos.get(i) = new Todo(todo.title, dom.currentTarget[HTMLInputElement].checked)
@@ -114,27 +114,27 @@ import upickle.default._
       }
     }/>
     <label htmlFor="toggle-all">Mark all as complete</label>
-    <ul class="todo-list">{ for { todo <- currentTodoList.each.items } yield todoListItem(todo).each }</ul>
+    <ul class="todo-list">{ for { todo <- currentTodoList.bind.items } yield todoListItem(todo).bind }</ul>
   </section>
 
   @dom def filterListItem(todoList: TodoList) = <li>
-    <a href={ todoList.hash } class={ if (todoList == currentTodoList.each) "selected" else "" }>{ todoList.text }</a>
+    <a href={ todoList.hash } class={ if (todoList == currentTodoList.bind) "selected" else "" }>{ todoList.text }</a>
   </li>
 
-  @dom def footer = <footer class="footer" style:display={if (allTodos.length.each == 0) "none" else ""}>
+  @dom def footer = <footer class="footer" style:display={if (allTodos.length.bind == 0) "none" else ""}>
     <span class="todo-count">
-      <strong>{ active.items.length.each.toString }</strong> { if (active.items.length.each == 1) "item" else "items"} left
+      <strong>{ active.items.length.bind.toString }</strong> { if (active.items.length.bind == 1) "item" else "items"} left
     </span>
-    <ul class="filters">{ for { todoList <- Constants(todoLists: _*) } yield filterListItem(todoList).each }</ul>
+    <ul class="filters">{ for { todoList <- Constants(todoLists: _*) } yield filterListItem(todoList).bind }</ul>
     <button class="clear-completed"
-            style:visibility={if (completed.items.length.each == 0) "hidden" else "visible"}
+            style:visibility={if (completed.items.length.bind == 0) "hidden" else "visible"}
             onclick={_: Any => allTodos.get --= (for {todo <- allTodos.get if todo.completed} yield todo) }>
       Clear completed
     </button>
   </footer>
 
   @dom def todoapp = {
-    <section class="todoapp">{ header.each }{ mainSection.each }{ footer.each }</section>
+    <section class="todoapp">{ header.bind }{ mainSection.bind }{ footer.bind }</section>
       <footer class="info">
         <p>Double-click to edit a todo</p>
       <p>Written by <a href="https://github.com/atry">Yang Bo</a></p>
