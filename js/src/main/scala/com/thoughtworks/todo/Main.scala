@@ -113,7 +113,7 @@ import upickle.default._
         }
       }
     }/>
-    <label htmlFor="toggle-all">Mark all as complete</label>
+    <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list">{ for { todo <- currentTodoList.bind.items } yield todoListItem(todo).bind }</ul>
   </section>
 
