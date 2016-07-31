@@ -66,33 +66,28 @@ import upickle.default._
 
   @dom def todoListItem(todo: Todo) = {
     val suppressOnBlur = Var(false)
-    def submit(newTitle: String): Unit = {
+    def ignoreEvent = { _: Event => }
+    def submit = { event: Event =>
       suppressOnBlur := true
       editingTodo := None
-      newTitle.trim match {
+      event.currentTarget.asInstanceOf[HTMLInputElement].value.trim match {
         case "" =>
           allTodos.get.remove(allTodos.get.indexOf(todo))
         case trimmedTitle =>
           allTodos.get(allTodos.get.indexOf(todo)) = new Todo(trimmedTitle, todo.completed)
       }
     }
-    val edit = <input class="edit" value={ todo.title }
-                      onblur={ 
-                        if (suppressOnBlur.bind) { _: Any =>
-                        } else { _: Any =>
-                          submit(dom.currentTarget[HTMLInputElement].value)
-                        }
-                      }
-                      onkeydown={ event: KeyboardEvent =>
-                        event.keyCode match {
-                          case KeyCode.Escape =>
-                            suppressOnBlur := true
-                            editingTodo := None
-                          case KeyCode.Enter =>
-                            submit(dom.currentTarget[HTMLInputElement].value)
-                          case _ =>
-                        }
-                      } />;
+    def keyDownHandler = { event: KeyboardEvent =>
+      event.keyCode match {
+        case KeyCode.Escape =>
+          suppressOnBlur := true
+          editingTodo := None
+        case KeyCode.Enter =>
+          submit(event)
+        case _ =>
+      }
+    }
+    val edit = <input class="edit" value={ todo.title } onblur={if (suppressOnBlur.bind) ignoreEvent else submit} onkeydown={keyDownHandler} />;
     <li class={s"${if (todo.completed) "completed" else ""} ${if (editingTodo.bind.contains(todo)) "editing" else ""}"}>
       <div class="view">
         <input class="toggle" type="checkbox" checked={todo.completed} onclick={_: Any =>
