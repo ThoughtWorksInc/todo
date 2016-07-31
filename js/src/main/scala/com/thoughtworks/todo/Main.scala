@@ -136,8 +136,8 @@ import upickle.default._
     <section class="todoapp">{ header.bind }{ mainSection.bind }{ footer.bind }</section>
     <footer class="info">
       <p>Double-click to edit a todo</p>
-    <p>Written by <a href="https://github.com/atry">Yang Bo</a></p>
-    <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+      <p>Written by <a href="https://github.com/atry">Yang Bo</a></p>
+      <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
     </footer>
   }
 
