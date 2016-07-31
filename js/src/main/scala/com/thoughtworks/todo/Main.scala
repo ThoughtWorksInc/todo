@@ -28,13 +28,8 @@ import upickle.default._
 
     val allTodos = Vars[Todo](load(): _*)
 
-    val localStorageMountPoint = new MultiMountPoint(allTodos) {
-      override def set(newValue: Seq[Todo]) = save(newValue)
-      override def splice(oldSeq: Seq[Todo], from: Int, that: GenSeq[Todo], replaced: Int) = {
-        save(oldSeq.view(0, from) ++ that ++ oldSeq.view(from + replaced, oldSeq.length))
-      }
-    }
-    localStorageMountPoint.watch()
+    @dom val autoSave: Binding[Unit] = save(allTodos.bind)
+    autoSave.watch()
 
     val editingTodo = Var[Option[Todo]](None)
 
