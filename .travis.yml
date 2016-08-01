@@ -4,6 +4,7 @@ cache:
   directories:
     - $HOME/.ivy2/cache
     - $HOME/.sbt/boot/
+    - $HOME/.npm/
 
 language: scala
 
