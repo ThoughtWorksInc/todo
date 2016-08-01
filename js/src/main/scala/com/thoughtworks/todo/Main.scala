@@ -1,13 +1,12 @@
 package com.thoughtworks.todo
 
-import com.thoughtworks.binding.Binding
-import com.thoughtworks.binding.Binding._
-import com.thoughtworks.binding.dom
+import com.thoughtworks.binding.{Binding, dom}
+import com.thoughtworks.binding.Binding.{BindingSeq, Constants, Var, Vars}
 import scala.scalajs.js.annotation.JSExport
-import org.scalajs.dom._
-import org.scalajs.dom.ext._
-import org.scalajs.dom.raw._
-import upickle.default._
+import org.scalajs.dom.{document, Event, KeyboardEvent, window}
+import org.scalajs.dom.ext.{KeyCode, LocalStorage}
+import org.scalajs.dom.raw.{HTMLInputElement, Node}
+import upickle.default.{read, write}
 
 @JSExport object Main {
 
