@@ -117,10 +117,6 @@ import upickle.default.{read, write}
       <ul class="todo-list">{ for { todo <- currentTodoList.bind.items } yield todoListItem(todo).bind }</ul>
     </section>
   }
-  
-  @dom def filterListItem(todoList: TodoList): Binding[Node] = <li>
-    <a href={ todoList.hash } class={ if (todoList == currentTodoList.bind) "selected" else "" }>{ todoList.text }</a>
-  </li>
 
   @dom def footer: Binding[Node] = {
     def clearCompletedClickHandler = { _: Event =>
@@ -130,7 +126,13 @@ import upickle.default.{read, write}
       <span class="todo-count">
         <strong>{ active.items.length.bind.toString }</strong> { if (active.items.length.bind == 1) "item" else "items"} left
       </span>
-      <ul class="filters">{ for { todoList <- Constants(todoLists: _*) } yield filterListItem(todoList).bind }</ul>
+      <ul class="filters">{
+        for { todoList <- Constants(todoLists: _*) } yield {
+          <li>
+        		<a href={ todoList.hash } class={ if (todoList == currentTodoList.bind) "selected" else "" }>{ todoList.text }</a>
+          </li>
+        }
+      }</ul>
       <button class="clear-completed" onclick={clearCompletedClickHandler}
               style:visibility={if (completed.items.length.bind == 0) "hidden" else "visible"}>
         Clear completed
