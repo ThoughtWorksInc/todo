@@ -74,7 +74,7 @@ import upickle.default.{read, write}
         case "" =>
           allTodos.get.remove(allTodos.get.indexOf(todo))
         case trimmedTitle =>
-          allTodos.get(allTodos.get.indexOf(todo)) = new Todo(trimmedTitle, todo.completed)
+          allTodos.get(allTodos.get.indexOf(todo)) = Todo(trimmedTitle, todo.completed)
       }
     }
     def keyDownHandler = { event: KeyboardEvent =>
