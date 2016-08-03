@@ -90,11 +90,12 @@ import upickle.default.{read, write}
     def ignoreEvent = { _: Event => }
     @dom def blureHandler: Binding[Event => Any] = if (suppressOnBlur.bind) ignoreEvent else submit
     val edit = <input class="edit" value={ todo.title } onblur={ blureHandler.bind } onkeydown={ keyDownHandler } />
+    def toggleHandler = { event: Event =>
+      allTodos.get(allTodos.get.indexOf(todo)) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
+    }
     <li class={s"${if (todo.completed) "completed" else ""} ${if (editingTodo.bind.contains(todo)) "editing" else ""}"}>
       <div class="view">
-        <input class="toggle" type="checkbox" checked={todo.completed} onclick={_: Event =>
-          allTodos.get(allTodos.get.indexOf(todo)) = new Todo(todo.title, dom.currentTarget[HTMLInputElement].checked)
-        }/>
+        <input class="toggle" type="checkbox" checked={todo.completed} onclick={toggleHandler}/>
         <label ondblclick={ _: Event => editingTodo := Some(todo); edit.focus() }>{ todo.title }</label>
         <button class="destroy" onclick={_: Event => allTodos.get.remove(allTodos.get.indexOf(todo))}></button>
       </div>
