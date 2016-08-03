@@ -67,7 +67,6 @@ import upickle.default.{read, write}
     // onblur is not only triggered by user interaction, but also triggered by programmatic DOM changes.
     // In order to suppress this behavior, we have to replace the onblur event listener to a dummy handler before programmatic DOM changes.
     val suppressOnBlur = Var(false)
-    def ignoreEvent = { _: Event => }
     def submit = { event: Event =>
       suppressOnBlur := true
       editingTodo := None
@@ -88,6 +87,7 @@ import upickle.default.{read, write}
         case _ =>
       }
     }
+    def ignoreEvent = { _: Event => }
     @dom def blureHandler: Binding[Event => Any] = if (suppressOnBlur.bind) ignoreEvent else submit
     val edit = <input class="edit" value={ todo.title } onblur={ blureHandler.bind } onkeydown={ keyDownHandler } />
     <li class={s"${if (todo.completed) "completed" else ""} ${if (editingTodo.bind.contains(todo)) "editing" else ""}"}>
