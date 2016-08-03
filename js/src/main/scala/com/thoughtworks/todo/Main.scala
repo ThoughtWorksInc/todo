@@ -129,7 +129,7 @@ import upickle.default.{read, write}
       <ul class="filters">{
         for { todoList <- Constants(todoLists: _*) } yield {
           <li>
-        		<a href={ todoList.hash } class={ if (todoList == currentTodoList.bind) "selected" else "" }>{ todoList.text }</a>
+            <a href={ todoList.hash } class={ if (todoList == currentTodoList.bind) "selected" else "" }>{ todoList.text }</a>
           </li>
         }
       }</ul>
