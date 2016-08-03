@@ -97,7 +97,7 @@ import upickle.default.{read, write}
       <div class="view">
         <input class="toggle" type="checkbox" checked={todo.completed} onclick={toggleHandler}/>
         <label ondblclick={ _: Event => editingTodo := Some(todo); edit.focus() }>{ todo.title }</label>
-        <button class="destroy" onclick={_: Event => allTodos.get.remove(allTodos.get.indexOf(todo))}></button>
+        <button class="destroy" onclick={ _: Event => allTodos.get.remove(allTodos.get.indexOf(todo)) }></button>
       </div>
       { edit }
     </li>
@@ -124,7 +124,7 @@ import upickle.default.{read, write}
 
   @dom def footer: Binding[Node] = {
     def clearCompletedClickHandler = { _: Event =>
-      allTodos.get --= (for {todo <- allTodos.get if todo.completed} yield todo)
+      allTodos.get --= (for { todo <- allTodos.get if todo.completed } yield todo)
     }
     <footer class="footer" style:display={if (allTodos.length.bind == 0) "none" else ""}>
       <span class="todo-count">
