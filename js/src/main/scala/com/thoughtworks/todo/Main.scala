@@ -119,17 +119,21 @@ import upickle.default.{read, write}
     <a href={ todoList.hash } class={ if (todoList == currentTodoList.bind) "selected" else "" }>{ todoList.text }</a>
   </li>
 
-  @dom def footer: Binding[Node] = <footer class="footer" style:display={if (allTodos.length.bind == 0) "none" else ""}>
-    <span class="todo-count">
-      <strong>{ active.items.length.bind.toString }</strong> { if (active.items.length.bind == 1) "item" else "items"} left
-    </span>
-    <ul class="filters">{ for { todoList <- Constants(todoLists: _*) } yield filterListItem(todoList).bind }</ul>
-    <button class="clear-completed"
-            style:visibility={if (completed.items.length.bind == 0) "hidden" else "visible"}
-            onclick={_: Event => allTodos.get --= (for {todo <- allTodos.get if todo.completed} yield todo) }>
-      Clear completed
-    </button>
-  </footer>
+  @dom def footer: Binding[Node] = {
+    def clearCompletedClickHandler = { _: Event =>
+      allTodos.get --= (for {todo <- allTodos.get if todo.completed} yield todo)
+    }
+    <footer class="footer" style:display={if (allTodos.length.bind == 0) "none" else ""}>
+      <span class="todo-count">
+        <strong>{ active.items.length.bind.toString }</strong> { if (active.items.length.bind == 1) "item" else "items"} left
+      </span>
+      <ul class="filters">{ for { todoList <- Constants(todoLists: _*) } yield filterListItem(todoList).bind }</ul>
+      <button class="clear-completed" onclick={clearCompletedClickHandler}
+              style:visibility={if (completed.items.length.bind == 0) "hidden" else "visible"}>
+        Clear completed
+      </button>
+    </footer>
+  }
 
   @dom def todoapp: Binding[BindingSeq[Node]] = {
     <section class="todoapp">{ header.bind }{ mainSection.bind }{ footer.bind }</section>
