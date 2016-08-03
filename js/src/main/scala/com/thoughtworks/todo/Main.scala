@@ -103,18 +103,21 @@ import upickle.default.{read, write}
     </li>
   }
 
-  @dom def mainSection: Binding[Node] = <section class="main" style:display={if (allTodos.length.bind == 0) "none" else ""}>
-    <input type="checkbox" class="toggle-all" checked={active.items.length.bind == 0} onclick={_: Event =>
+  @dom def mainSection: Binding[Node] = {
+    def toggleAllClickHandler = { event: Event =>
       for ((todo, i) <- allTodos.get.zipWithIndex) {
-        if (todo.completed != dom.currentTarget[HTMLInputElement].checked) {
-          allTodos.get(i) = new Todo(todo.title, dom.currentTarget[HTMLInputElement].checked)
+        if (todo.completed != event.currentTarget.asInstanceOf[HTMLInputElement].checked) {
+          allTodos.get(i) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
         }
       }
-    }/>
-    <label for="toggle-all">Mark all as complete</label>
-    <ul class="todo-list">{ for { todo <- currentTodoList.bind.items } yield todoListItem(todo).bind }</ul>
-  </section>
-
+    }
+    <section class="main" style:display={if (allTodos.length.bind == 0) "none" else ""}>
+      <input type="checkbox" class="toggle-all" checked={active.items.length.bind == 0} onclick={toggleAllClickHandler}/>
+      <label for="toggle-all">Mark all as complete</label>
+      <ul class="todo-list">{ for { todo <- currentTodoList.bind.items } yield todoListItem(todo).bind }</ul>
+    </section>
+  }
+  
   @dom def filterListItem(todoList: TodoList): Binding[Node] = <li>
     <a href={ todoList.hash } class={ if (todoList == currentTodoList.bind) "selected" else "" }>{ todoList.text }</a>
   </li>
