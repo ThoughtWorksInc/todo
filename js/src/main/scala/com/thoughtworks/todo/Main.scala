@@ -3,7 +3,7 @@ package com.thoughtworks.todo
 import com.thoughtworks.binding.{Binding, dom}
 import com.thoughtworks.binding.Binding.{BindingSeq, Constants, Var, Vars}
 import scala.scalajs.js.annotation.JSExport
-import org.scalajs.dom.{document, Event, KeyboardEvent, window}
+import org.scalajs.dom.{Event, KeyboardEvent, window}
 import org.scalajs.dom.ext.{KeyCode, LocalStorage}
 import org.scalajs.dom.raw.{HTMLInputElement, Node}
 import upickle.default.{read, write}
@@ -140,7 +140,7 @@ import upickle.default.{read, write}
     </footer>
   }
 
-  @dom def todoapp: Binding[BindingSeq[Node]] = {
+  @JSExport @dom def todoapp: Binding[BindingSeq[Node]] = {
     <section class="todoapp">{ header.bind }{ mainSection.bind }{ footer.bind }</section>
     <footer class="info">
       <p>Double-click to edit a todo</p>
@@ -149,6 +149,6 @@ import upickle.default.{read, write}
     </footer>
   }
 
-  @JSExport def main() = dom.render(document.body, todoapp)
+  @JSExport def main(container: Node) = dom.render(container, todoapp)
 
 }
