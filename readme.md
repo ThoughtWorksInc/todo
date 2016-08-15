@@ -1,4 +1,4 @@
-# [Binding.scala • TodoMVC](https://github.com/ThoughtWorksInc/todo)
+# Binding.scala • TodoMVC <a href="http://thoughtworks.com/"><img align="right" src="https://www.thoughtworks.com/imgs/tw-logo.png" title="ThoughtWorks" height="15em"/></a>
 
 [Binding.scala](https://github.com/ThoughtWorksInc/Binding.scala) is a data-binding framework for [Scala](http://www.scala-lang.org/), running on both JVM and [Scala.js](http://www.scala-js.org/).
 
