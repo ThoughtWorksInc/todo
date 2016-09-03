@@ -17,7 +17,7 @@ only one source file, 154 lines of code!
  *
  * The `@dom` annotations enable two magics:
  *  1. XHTML literals to create DOM nodes
- *  2. `xxx.bind` syntax, which make this DOM tree keep updated whenever `xxx` changes.
+ *  2. `xxx.bind` syntax, which makes this DOM tree keep updated whenever `xxx` changes.
  */
 @dom def render = {
   val value = Var("")
