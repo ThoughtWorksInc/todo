@@ -113,13 +113,13 @@ import upickle.default.{read, write}
     <section class="main" style:display={if (allTodos.length.bind == 0) "none" else ""}>
       <input type="checkbox" class="toggle-all" checked={active.items.length.bind == 0} onclick={toggleAllClickHandler}/>
       <label for="toggle-all">Mark all as complete</label>
-      <ul class="todo-list">{ for ( todo <- currentTodoList.bind.items ) yield todoListItem(todo).bind }</ul>
+      <ul class="todo-list">{ for (todo <- currentTodoList.bind.items) yield todoListItem(todo).bind }</ul>
     </section>
   }
 
   @dom def footer: Binding[Node] = {
     def clearCompletedClickHandler = { _: Event =>
-      allTodos.get --= (for ( todo <- allTodos.get if todo.completed ) yield todo)
+      allTodos.get --= (for (todo <- allTodos.get if todo.completed) yield todo)
     }
     <footer class="footer" style:display={if (allTodos.length.bind == 0) "none" else ""}>
       <span class="todo-count">
