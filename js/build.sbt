@@ -1,6 +1,6 @@
 enablePlugins(ScalaJSPlugin)
 
-libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "10.0.0-M2"
+libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "10.0.0-M3"
 
 libraryDependencies += "com.lihaoyi" %%% "upickle" % "0.3.9"
 
@@ -11,12 +11,3 @@ crossPaths := false
 crossTarget in fullOptJS := baseDirectory.value
 
 crossTarget in fastOptJS := baseDirectory.value
-
-libraryDependencies ++= {
-  CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, scalaMajor)) if scalaMajor >= 11 =>
-      Seq("org.scala-lang.modules" %% "scala-xml" % "1.0.6" % Provided)
-    case _ =>
-      Nil
-  }
-}
