@@ -1,6 +1,6 @@
 enablePlugins(ScalaJSPlugin)
 
-libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "10.0.0-M3"
+libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "10.0.0-M4"
 
 libraryDependencies += "com.lihaoyi" %%% "upickle" % "0.3.9"
 
