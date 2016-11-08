@@ -1,6 +1,6 @@
 package com.thoughtworks.todo
 
-import com.thoughtworks.binding.{Binding, dom}
+import com.thoughtworks.binding.{Binding, dom, Route}
 import com.thoughtworks.binding.Binding.{BindingSeq, Constants, Var, Vars}
 import scala.scalajs.js.annotation.JSExport
 import org.scalajs.dom.{Event, KeyboardEvent, window}
@@ -35,12 +35,12 @@ import upickle.default.{read, write}
     val active = TodoList("Active", "#/active", for (todo <- allTodos if !todo.completed) yield todo)
     val completed = TodoList("Completed", "#/completed", for (todo <- allTodos if todo.completed) yield todo)
     val todoLists = Seq(all, active, completed)
+    val currentTodoList = Var(all)
 
-    def getCurrentTodoList = todoLists.find(_.hash == window.location.hash).getOrElse(all)
-    val currentTodoList = Var(getCurrentTodoList)
-    @dom val hashBinding: Binding[Unit] = window.location.hash = currentTodoList.bind.hash
-    hashBinding.watch()
-    window.onhashchange = { _: Event => currentTodoList := getCurrentTodoList }
+    Route.watchHash(currentTodoList)(new Route.Format[TodoList] {
+      override def unapply(hashText: String) = todoLists.find(_.hash == window.location.hash)
+      override def apply(state: TodoList): String = state.hash
+    })
   }
   import Models._
 

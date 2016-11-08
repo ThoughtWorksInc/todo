@@ -1,8 +1,8 @@
 enablePlugins(ScalaJSPlugin)
 
-libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "10.0.0-M5"
+libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "10.0.0-M7"
 
-libraryDependencies += "com.lihaoyi" %%% "upickle" % "0.3.9"
+libraryDependencies += "com.thoughtworks.binding" %%% "route" % "10.0.0-M7"
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
