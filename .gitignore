@@ -183,3 +183,7 @@ local.properties
 # Files created for deployment
 secret/
 local.sbt
+
+# JS files for testing
+*-test-*opt.js
+*-test-*opt.js.map
