@@ -34,7 +34,7 @@ import upickle.default.{read, write}
     val all = TodoList("All", "#/", allTodos)
     val active = TodoList("Active", "#/active", for (todo <- allTodos if !todo.completed) yield todo)
     val completed = TodoList("Completed", "#/completed", for (todo <- allTodos if todo.completed) yield todo)
-    val todoLists = Seq(all, active, completed)
+    val todoLists = List(all, active, completed)
     val currentTodoList = Var(all)
 
     Route.watchHash(currentTodoList)(new Route.Format[TodoList] {
@@ -125,7 +125,8 @@ import upickle.default.{read, write}
         <strong>{ active.items.length.bind.toString }</strong> { if (active.items.length.bind == 1) "item" else "items"} left
       </span>
       <ul class="filters">{
-        for (todoList <- Constants(todoLists: _*)) yield {
+        import scalaz.std.list.listInstance // Enable list comprehension in a @dom method
+        for (todoList <- todoLists) yield {
           <li>
             <a href={ todoList.hash } class={ if (todoList == currentTodoList.bind) "selected" else "" }>{ todoList.text }</a>
           </li>
