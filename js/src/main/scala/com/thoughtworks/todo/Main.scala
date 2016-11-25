@@ -1,7 +1,7 @@
 package com.thoughtworks.todo
 
 import com.thoughtworks.binding.{Binding, dom, Route}
-import com.thoughtworks.binding.Binding.{BindingSeq, Constants, Var, Vars}
+import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}
 import scala.scalajs.js.annotation.JSExport
 import org.scalajs.dom.{Event, KeyboardEvent, window}
 import org.scalajs.dom.ext.{KeyCode, LocalStorage}
