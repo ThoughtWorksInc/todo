@@ -26,7 +26,7 @@ import upickle.default.{read, write}
 
     val allTodos = Vars[Todo](load(): _*)
 
-    @dom val autoSave: Binding[Unit] = Binding { save(allTodos.bind) }
+    val autoSave: Binding[Unit] = Binding { save(allTodos.bind) }
     autoSave.watch()
 
     val editingTodo = Var[Option[Todo]](None)
