@@ -1,6 +1,6 @@
 enablePlugins(SbtJsEngine)
 
-scalaVersion in Global := "2.12.0"
+scalaVersion in Global := "2.12.4"
 
 lazy val js = project
 
