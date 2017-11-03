@@ -6,10 +6,11 @@ cache:
     - $HOME/.sbt/boot/
     - $HOME/.npm/
 
-language: scala
 
-jdk:
-  - oraclejdk8
+language: node_js
+
+node_js:
+  - 8
 
 before_cache:
   - find $HOME/.sbt -name '*.lock' | xargs rm
