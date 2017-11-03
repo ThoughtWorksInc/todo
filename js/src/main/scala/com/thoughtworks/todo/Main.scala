@@ -1,14 +1,15 @@
 package com.thoughtworks.todo
 
-import com.thoughtworks.binding.{Binding, dom, Route}
+import com.thoughtworks.binding.{Binding, Route, dom}
 import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}
-import scala.scalajs.js.annotation.JSExport
+
+import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 import org.scalajs.dom.{Event, KeyboardEvent, window}
 import org.scalajs.dom.ext.{KeyCode, LocalStorage}
 import org.scalajs.dom.raw.{HTMLInputElement, Node}
 import upickle.default.{read, write}
 
-@JSExport object Main {
+@JSExportTopLevel("Main") object Main {
 
   /** @note [[Todo]] is not a case class because we want to distinguish two [[Todo]]s with the same content */
   final class Todo(val title: String, val completed: Boolean)

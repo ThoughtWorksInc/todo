@@ -24,7 +24,7 @@ indexHtml := {
       <script type="text/javascript" src="node_modules/todomvc-common/base.js"></script>
       <script type="text/javascript" src={ linkedJs.file.relativeTo(baseDirectory.value).get.toString }></script>
       <div id="application-container"></div>
-      <script type="text/javascript"> com.thoughtworks.todo.Main().main(document.getElementById('application-container')) </script>
+      <script type="text/javascript"> Main.main(document.getElementById('application-container')) </script>
     </body>
   </html>
   val outputFile = baseDirectory.value / "index.html"
