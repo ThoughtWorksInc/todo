@@ -27,7 +27,7 @@ import upickle.default.{read, write}
 
     val allTodos = Vars[Todo](load(): _*)
 
-    val autoSave: Binding[Unit] = Binding { save(allTodos.bind) }
+    val autoSave: Binding[Unit] = Binding { save(allTodos.all.bind) }
     autoSave.watch()
 
     val editingTodo = Var[Option[Todo]](None)
@@ -36,12 +36,11 @@ import upickle.default.{read, write}
     val active = TodoList("Active", "#/active", for (todo <- allTodos if !todo.completed) yield todo)
     val completed = TodoList("Completed", "#/completed", for (todo <- allTodos if todo.completed) yield todo)
     val todoLists = Vector(all, active, completed)
-    val currentTodoList = Var(all)
-
-    Route.watchHash(currentTodoList)(new Route.Format[TodoList] {
+    val route = Route.Hash(all)(new Route.Format[TodoList] {
       override def unapply(hashText: String) = todoLists.find(_.hash == window.location.hash)
       override def apply(state: TodoList): String = state.hash
     })
+    route.watch()
   }
   import Models._
 
@@ -52,7 +51,7 @@ import upickle.default.{read, write}
           input.value.trim match {
             case "" =>
             case title =>
-              allTodos.get += Todo(title, completed = false)
+              allTodos.value += Todo(title, completed = false)
               input.value = ""
           }
         case _ =>
@@ -69,20 +68,20 @@ import upickle.default.{read, write}
     // In order to suppress this behavior, we have to replace the onblur event listener to a dummy handler before programmatic DOM changes.
     val suppressOnBlur = Var(false)
     def submit = { event: Event =>
-      suppressOnBlur := true
-      editingTodo := None
+      suppressOnBlur.value = true
+      editingTodo.value = None
       event.currentTarget.asInstanceOf[HTMLInputElement].value.trim match {
         case "" =>
-          allTodos.get.remove(allTodos.get.indexOf(todo))
+          allTodos.value.remove(allTodos.value.indexOf(todo))
         case trimmedTitle =>
-          allTodos.get(allTodos.get.indexOf(todo)) = Todo(trimmedTitle, todo.completed)
+          allTodos.value(allTodos.value.indexOf(todo)) = Todo(trimmedTitle, todo.completed)
       }
     }
     def keyDownHandler = { event: KeyboardEvent =>
       event.keyCode match {
         case KeyCode.Escape =>
-          suppressOnBlur := true
-          editingTodo := None
+          suppressOnBlur.value = true
+          editingTodo.value = None
         case KeyCode.Enter =>
           submit(event)
         case _ =>
@@ -90,13 +89,13 @@ import upickle.default.{read, write}
     }
     @dom def blurHandler: Binding[Event => Any] = if (suppressOnBlur.bind) Function.const(()) else submit
     def toggleHandler = { event: Event =>
-      allTodos.get(allTodos.get.indexOf(todo)) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
+      allTodos.value(allTodos.value.indexOf(todo)) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
     }
     <li class={s"${if (todo.completed) "completed" else ""} ${if (editingTodo.bind.contains(todo)) "editing" else ""}"}>
       <div class="view">
         <input class="toggle" type="checkbox" checked={todo.completed} onclick={toggleHandler}/>
-        <label ondblclick={ _: Event => editingTodo := Some(todo); editInput.focus() }>{ todo.title }</label>
-        <button class="destroy" onclick={ _: Event => allTodos.get.remove(allTodos.get.indexOf(todo)) }></button>
+        <label ondblclick={ _: Event => editingTodo.value = Some(todo); editInput.focus() }>{ todo.title }</label>
+        <button class="destroy" onclick={ _: Event => allTodos.value.remove(allTodos.value.indexOf(todo)) }></button>
       </div>
       <input id="editInput" class="edit" value={ todo.title } onblur={ blurHandler.bind } onkeydown={ keyDownHandler } />
     </li>
@@ -104,22 +103,22 @@ import upickle.default.{read, write}
 
   @dom def mainSection: Binding[Node] = {
     def toggleAllClickHandler = { event: Event =>
-      for ((todo, i) <- allTodos.get.zipWithIndex) {
+      for ((todo, i) <- allTodos.value.zipWithIndex) {
         if (todo.completed != event.currentTarget.asInstanceOf[HTMLInputElement].checked) {
-          allTodos.get(i) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
+          allTodos.value(i) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
         }
       }
     }
     <section class="main" style:display={if (allTodos.length.bind == 0) "none" else ""}>
       <input type="checkbox" class="toggle-all" checked={active.items.length.bind == 0} onclick={toggleAllClickHandler}/>
       <label for="toggle-all">Mark all as complete</label>
-      <ul class="todo-list">{ for (todo <- currentTodoList.bind.items) yield todoListItem(todo).bind }</ul>
+      <ul class="todo-list">{ for (todo <- route.state.bind.items) yield todoListItem(todo).bind }</ul>
     </section>
   }
 
   @dom def footer: Binding[Node] = {
     def clearCompletedClickHandler = { _: Event =>
-      allTodos.get --= (for (todo <- allTodos.get if todo.completed) yield todo)
+      allTodos.value --= (for (todo <- allTodos.value if todo.completed) yield todo)
     }
     <footer class="footer" style:display={if (allTodos.length.bind == 0) "none" else ""}>
       <span class="todo-count">
@@ -129,7 +128,7 @@ import upickle.default.{read, write}
         import scalaz.std.vector.vectorInstance // Enable list comprehension in a @dom method
         for (todoList <- todoLists) yield {
           <li>
-            <a href={ todoList.hash } class={ if (todoList == currentTodoList.bind) "selected" else "" }>{ todoList.text }</a>
+            <a href={ todoList.hash } class={ if (todoList == route.state.bind) "selected" else "" }>{ todoList.text }</a>
           </li>
         }
       }</ul>
