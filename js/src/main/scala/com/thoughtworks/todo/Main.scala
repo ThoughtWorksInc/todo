@@ -109,7 +109,7 @@ import upickle.default.{read, write}
         }
       }
     }
-    <section class="main" style:display={if (allTodos.length.bind == 0) "none" else ""}>
+    <section class="main" style:display={ if (allTodos.length.bind == 0) "none" else "" }>
       <input type="checkbox" class="toggle-all" checked={active.items.length.bind == 0} onclick={toggleAllClickHandler}/>
       <label for="toggle-all">Mark all as complete</label>
       <ul class="todo-list">{ for (todo <- route.state.bind.items) yield todoListItem(todo).bind }</ul>
@@ -120,7 +120,7 @@ import upickle.default.{read, write}
     def clearCompletedClickHandler = { _: Event =>
       allTodos.value --= (for (todo <- allTodos.value if todo.completed) yield todo)
     }
-    <footer class="footer" style:display={if (allTodos.length.bind == 0) "none" else ""}>
+    <footer class="footer" style:display={ if (allTodos.length.bind == 0) "none" else "" }>
       <span class="todo-count">
         <strong>{ active.items.length.bind.toString }</strong> { if (active.items.length.bind == 1) "item" else "items"} left
       </span>
