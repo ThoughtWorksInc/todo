@@ -13,7 +13,7 @@ ssh-add ./secret/id_rsa &&
 
 git fetch origin gh-pages &&
 git checkout FETCH_HEAD -b gh-pages --force &&
-git merge --no-edit master -s ours &&
+git merge --no-edit master -X ours &&
 sbt "set scalaJSStage in js := FullOptStage" indexHtml &&
 git rm --ignore-unmatch deploy.sh .travis.yml &&
 git add . &&
