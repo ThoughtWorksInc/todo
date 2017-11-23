@@ -5,15 +5,15 @@ git log --max-count=1 --format=format:%ae | xargs -0 -n 1 git config --global --
 
 git config --global push.default simple &&
 
-git branch --force gh-pages &&
-git checkout gh-pages &&
 git config remote.origin.url git@github.com:"$TRAVIS_REPO_SLUG".git &&
 
 eval "$(ssh-agent -s)" &&
 chmod 600 ./secret/id_rsa &&
 ssh-add ./secret/id_rsa &&
 
-git pull --no-edit origin gh-pages -s recursive -X ours &&
+git fetch origin gh-pages &&
+git checkout gh-pages --force &&
+git merge --no-edit master -s ours &&
 sbt "set scalaJSStage in js := FullOptStage" indexHtml &&
 git rm --ignore-unmatch deploy.sh .travis.yml &&
 git add . &&
