@@ -87,7 +87,7 @@ import upickle.default.{read, write}
         case _ =>
       }
     }
-    @dom def blurHandler: Binding[Event => Any] = if (suppressOnBlur.bind) Function.const(()) else submit
+    def blurHandler = Binding[Event => Any] { if (suppressOnBlur.bind) Function.const(()) else submit }
     def toggleHandler = { event: Event =>
       allTodos.value(allTodos.value.indexOf(todo)) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
     }
