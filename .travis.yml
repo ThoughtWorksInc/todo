@@ -29,4 +29,4 @@ deploy:
   script: ./deploy.sh
   on:
     condition: -e ./deploy.sh
-    all_branches: true
+    all_branches: false
