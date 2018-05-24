@@ -11,3 +11,7 @@ crossPaths := false
 crossTarget in fullOptJS := baseDirectory.value
 
 crossTarget in fastOptJS := baseDirectory.value
+
+scalaJSLinkerConfig ~= {
+  _.withESFeatures(_.withUseECMAScript2015(true))
+}
