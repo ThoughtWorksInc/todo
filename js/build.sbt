@@ -1,8 +1,8 @@
 enablePlugins(ScalaJSPlugin)
 
-libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "11.2.0"
+libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "11.3.0"
 
-libraryDependencies += "com.thoughtworks.binding" %%% "route" % "11.2.0"
+libraryDependencies += "com.thoughtworks.binding" %%% "route" % "11.3.0"
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
 
