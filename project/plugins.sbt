@@ -1,5 +1,5 @@
-addSbtPlugin("com.typesafe.sbt" % "sbt-js-engine" % "1.2.2")
+addSbtPlugin("com.typesafe.sbt" % "sbt-js-engine" % "1.2.3")
 
 addSbtPlugin("com.thoughtworks.sbt-scala-js-map" % "sbt-scala-js-map" % "2.0.0")
 
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.25")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.26")
