@@ -47,7 +47,7 @@ jobs:
       run: sbt "set scalaJSStage in js := FullOptStage" indexHtml
     - name: Deploy
       run: |
-        git rm --ignore-unmatch .github &&
+        git rm --ignore-unmatch  -r .github &&
         git add . &&
         git commit -m 'Publish to GitHub Pages' &&
         git push origin gh-pages:gh-pages
