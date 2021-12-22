@@ -13,7 +13,10 @@ import upickle.default._
 
 @JSExportTopLevel("Main") object Main {
 
-  /** @note [[Todo]] is not a case class because we want to distinguish two [[Todo]]s with the same content */
+  /** @note
+    *   [[Todo]] is not a case class because we want to distinguish two
+    *   [[Todo]]s with the same content
+    */
   final class Todo(val title: String, val completed: Boolean)
   object Todo {
     implicit val rw: ReadWriter[Todo] = macroRW
@@ -25,8 +28,10 @@ import upickle.default._
 
   object Models {
     val LocalStorageName = "todos-binding.scala"
-    def load() = LocalStorage(LocalStorageName).toSeq.flatMap(read[Seq[Todo]](_))
-    def save(todos: collection.Seq[Todo]) = LocalStorage(LocalStorageName) = write(todos)
+    def load() =
+      LocalStorage(LocalStorageName).toSeq.flatMap(read[Seq[Todo]](_))
+    def save(todos: collection.Seq[Todo]) = LocalStorage(LocalStorageName) =
+      write(todos)
 
     val allTodos = Vars[Todo](load(): _*)
 
@@ -36,11 +41,20 @@ import upickle.default._
     val editingTodo = Var[Option[Todo]](None)
 
     val all = TodoList("All", "#/", allTodos)
-    val active = TodoList("Active", "#/active", for (todo <- allTodos if !todo.completed) yield todo)
-    val completed = TodoList("Completed", "#/completed", for (todo <- allTodos if todo.completed) yield todo)
+    val active = TodoList(
+      "Active",
+      "#/active",
+      for (todo <- allTodos if !todo.completed) yield todo
+    )
+    val completed = TodoList(
+      "Completed",
+      "#/completed",
+      for (todo <- allTodos if todo.completed) yield todo
+    )
     val todoLists = Vector(all, active, completed)
     val route = Route.Hash(all)(new Route.Format[TodoList] {
-      override def unapply(hashText: String) = todoLists.find(_.hash == window.location.hash)
+      override def unapply(hashText: String) =
+        todoLists.find(_.hash == window.location.hash)
       override def apply(state: TodoList): String = state.hash
     })
     route.watch()
@@ -62,7 +76,9 @@ import upickle.default._
     }
     <header class="header">
       <h1>todos</h1>
-      <input class="new-todo" autofocus={true} placeholder="What needs to be done?" onkeydown={keyDownHandler}/>
+      <input class="new-todo" autofocus={
+      true
+    } placeholder="What needs to be done?" onkeydown={keyDownHandler}/>
     </header>
   }
 
@@ -77,7 +93,8 @@ import upickle.default._
         case "" =>
           allTodos.value.remove(allTodos.value.indexOf(todo))
         case trimmedTitle =>
-          allTodos.value(allTodos.value.indexOf(todo)) = Todo(trimmedTitle, todo.completed)
+          allTodos.value(allTodos.value.indexOf(todo)) =
+            Todo(trimmedTitle, todo.completed)
       }
     }
     def keyDownHandler = { event: KeyboardEvent =>
@@ -90,16 +107,32 @@ import upickle.default._
         case _ =>
       }
     }
-    def blurHandler = Binding[Event => Any] { if (suppressOnBlur.bind) Function.const(()) else submit }
-    def toggleHandler = { event: Event =>
-      allTodos.value(allTodos.value.indexOf(todo)) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
+    def blurHandler = Binding[Event => Any] {
+      if (suppressOnBlur.bind) Function.const(()) else submit
     }
-    val editInput = <input id="editInput" class="edit" value={ todo.title } onblur={ blurHandler.bind } onkeydown={ keyDownHandler } />;
-    <li class={s"${if (todo.completed) "completed" else ""} ${if (editingTodo.bind.contains(todo)) "editing" else ""}"}>
+    def toggleHandler = { event: Event =>
+      allTodos.value(allTodos.value.indexOf(todo)) = Todo(
+        todo.title,
+        event.currentTarget.asInstanceOf[HTMLInputElement].checked
+      )
+    }
+    val editInput = <input id="editInput" class="edit" value={
+      todo.title
+    } onblur={blurHandler.bind} onkeydown={keyDownHandler} />;
+    <li class={
+      s"${if (todo.completed) "completed" else ""} ${if (editingTodo.bind.contains(todo)) "editing"
+      else ""}"
+    }>
       <div class="view">
-        <input class="toggle" type="checkbox" checked={todo.completed} onclick={toggleHandler}/>
-        <label ondblclick={ _: Event => editingTodo.value = Some(todo); editInput.value.focus() }>{ todo.title }</label>
-        <button class="destroy" onclick={ _: Event => allTodos.value.remove(allTodos.value.indexOf(todo)) }></button>
+        <input class="toggle" type="checkbox" checked={todo.completed} onclick={
+      toggleHandler
+    }/>
+        <label ondblclick={
+      _: Event => editingTodo.value = Some(todo); editInput.value.focus()
+    }>{todo.title}</label>
+        <button class="destroy" onclick={
+      _: Event => allTodos.value.remove(allTodos.value.indexOf(todo))
+    }></button>
       </div>
       {editInput}
     </li>
@@ -108,42 +141,65 @@ import upickle.default._
   @html def mainSection: Binding[Node] = {
     def toggleAllClickHandler = { event: Event =>
       for ((todo, i) <- allTodos.value.zipWithIndex) {
-        if (todo.completed != event.currentTarget.asInstanceOf[HTMLInputElement].checked) {
-          allTodos.value(i) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
+        if (
+          todo.completed != event.currentTarget
+            .asInstanceOf[HTMLInputElement]
+            .checked
+        ) {
+          allTodos.value(i) = Todo(
+            todo.title,
+            event.currentTarget.asInstanceOf[HTMLInputElement].checked
+          )
         }
       }
     }
-    <section class="main" style={ if (allTodos.length.bind == 0) "display:none" else "" }>
-      <input type="checkbox" id="toggle-all" class="toggle-all" checked={active.items.length.bind == 0} onclick={toggleAllClickHandler}/>
+    <section class="main" style={
+      if (allTodos.length.bind == 0) "display:none" else ""
+    }>
+      <input type="checkbox" id="toggle-all" class="toggle-all" checked={
+      active.items.length.bind == 0
+    } onclick={toggleAllClickHandler}/>
       <label for="toggle-all">Mark all as complete</label>
-      <ul class="todo-list">{ for (todo <- route.state.bind.items) yield todoListItem(todo).bind }</ul>
+      <ul class="todo-list">{
+      for (todo <- route.state.bind.items) yield todoListItem(todo).bind
+    }</ul>
     </section>
   }
 
   @html def footer: Binding[Node] = {
     def clearCompletedClickHandler = { _: Event =>
-      allTodos.value --= (for (todo <- allTodos.value if todo.completed) yield todo)
+      allTodos.value --= (for (todo <- allTodos.value if todo.completed)
+        yield todo)
     }
-    <footer class="footer" style={ if (allTodos.length.bind == 0) "display:none" else "" }>
+    <footer class="footer" style={
+      if (allTodos.length.bind == 0) "display:none" else ""
+    }>
       <span class="todo-count">
-        <strong>{ active.items.length.bind.toString }</strong> { if (active.items.length.bind == 1) "item" else "items"} left
+        <strong>{active.items.length.bind.toString}</strong> {
+      if (active.items.length.bind == 1) "item" else "items"
+    } left
       </span>
       <ul class="filters">{
-        for (todoList <- todoLists) yield {
-          <li>
-            <a href={ todoList.hash } class={ if (todoList == route.state.bind) "selected" else "" }>{ todoList.text }</a>
+      for (todoList <- todoLists) yield {
+        <li>
+            <a href={todoList.hash} class={
+          if (todoList == route.state.bind) "selected" else ""
+        }>{todoList.text}</a>
           </li>
-        }
-      }</ul>
+      }
+    }</ul>
       <button class="clear-completed" onclick={clearCompletedClickHandler}
-              style={if (completed.items.length.bind == 0) "visibility:hidden" else "visibility:visible"}>
+              style={
+      if (completed.items.length.bind == 0) "visibility:hidden"
+      else "visibility:visible"
+    }>
         Clear completed
       </button>
     </footer>
   }
 
   @html def todoapp: BindingSeq[Node] = {
-    <section class="todoapp">{ header.bind }{ mainSection.bind }{ footer.bind }</section>
+    <section class="todoapp">{header.bind}{mainSection.bind}{footer.bind}</section>
     <footer class="info">
       <p>Double-click to edit a todo</p>
       <p>Written by <a href="https://github.com/atry">Yang Bo</a></p>
