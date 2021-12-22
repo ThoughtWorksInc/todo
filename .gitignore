@@ -181,7 +181,7 @@ local.properties
 # Created by .ignore support plugin (hsz.mobi)
 
 # Files created for deployment
-secret/
+target/
 local.sbt
 
 # JS files for testing
