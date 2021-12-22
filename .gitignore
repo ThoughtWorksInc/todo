@@ -185,5 +185,11 @@ local.properties
 # Created by .ignore support plugin (hsz.mobi)
 
 # Files created for deployment
-secret/
+target/
 local.sbt
+secret/
+.metals/
+.bloop/
+metals.sbt
+.bsp/sbt.json
+.vscode/launch.json
