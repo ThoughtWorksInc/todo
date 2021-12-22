@@ -1,19 +1,22 @@
 package com.thoughtworks.todo
 
-import com.thoughtworks.binding.{Binding, Route, dom}
+import org.lrng.binding.html
+import com.thoughtworks.binding.{Binding, Route}
 import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}
+import com.thoughtworks.binding.Binding.BindingInstances.monadSyntax._
 
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 import org.scalajs.dom.{Event, KeyboardEvent, window}
 import org.scalajs.dom.ext.{KeyCode, LocalStorage}
 import org.scalajs.dom.raw.{HTMLInputElement, Node}
-import upickle.default.{read, write}
+import upickle.default._
 
 @JSExportTopLevel("Main") object Main {
 
   /** @note [[Todo]] is not a case class because we want to distinguish two [[Todo]]s with the same content */
   final class Todo(val title: String, val completed: Boolean)
   object Todo {
+    implicit val rw: ReadWriter[Todo] = macroRW
     def apply(title: String, completed: Boolean) = new Todo(title, completed)
     def unapply(todo: Todo) = Option((todo.title, todo.completed))
   }
@@ -22,12 +25,12 @@ import upickle.default.{read, write}
 
   object Models {
     val LocalStorageName = "todos-binding.scala"
-    def load() = LocalStorage(LocalStorageName).toSeq.flatMap(read[Seq[Todo]])
-    def save(todos: Seq[Todo]) = LocalStorage(LocalStorageName) = write(todos)
+    def load() = LocalStorage(LocalStorageName).toSeq.flatMap(read[Seq[Todo]](_))
+    def save(todos: collection.Seq[Todo]) = LocalStorage(LocalStorageName) = write(todos)
 
     val allTodos = Vars[Todo](load(): _*)
 
-    val autoSave: Binding[Unit] = Binding { save(allTodos.all.bind) }
+    val autoSave: Binding[Unit] = allTodos.all.map(save)
     autoSave.watch()
 
     val editingTodo = Var[Option[Todo]](None)
@@ -44,7 +47,7 @@ import upickle.default.{read, write}
   }
   import Models._
 
-  @dom def header: Binding[Node] = {
+  @html def header: Binding[Node] = {
     val keyDownHandler = { event: KeyboardEvent =>
       (event.currentTarget, event.keyCode) match {
         case (input: HTMLInputElement, KeyCode.Enter) =>
@@ -63,7 +66,7 @@ import upickle.default.{read, write}
     </header>
   }
 
-  @dom def todoListItem(todo: Todo): Binding[Node] = {
+  @html def todoListItem(todo: Todo): Binding[Node] = {
     // onblur is not only triggered by user interaction, but also triggered by programmatic DOM changes.
     // In order to suppress this behavior, we have to replace the onblur event listener to a dummy handler before programmatic DOM changes.
     val suppressOnBlur = Var(false)
@@ -91,17 +94,18 @@ import upickle.default.{read, write}
     def toggleHandler = { event: Event =>
       allTodos.value(allTodos.value.indexOf(todo)) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
     }
+    val editInput = <input id="editInput" class="edit" value={ todo.title } onblur={ blurHandler.bind } onkeydown={ keyDownHandler } />;
     <li class={s"${if (todo.completed) "completed" else ""} ${if (editingTodo.bind.contains(todo)) "editing" else ""}"}>
       <div class="view">
         <input class="toggle" type="checkbox" checked={todo.completed} onclick={toggleHandler}/>
-        <label ondblclick={ _: Event => editingTodo.value = Some(todo); editInput.focus() }>{ todo.title }</label>
+        <label ondblclick={ _: Event => editingTodo.value = Some(todo); editInput.value.focus() }>{ todo.title }</label>
         <button class="destroy" onclick={ _: Event => allTodos.value.remove(allTodos.value.indexOf(todo)) }></button>
       </div>
-      <input id="editInput" class="edit" value={ todo.title } onblur={ blurHandler.bind } onkeydown={ keyDownHandler } />
+      {editInput}
     </li>
   }
 
-  @dom def mainSection: Binding[Node] = {
+  @html def mainSection: Binding[Node] = {
     def toggleAllClickHandler = { event: Event =>
       for ((todo, i) <- allTodos.value.zipWithIndex) {
         if (todo.completed != event.currentTarget.asInstanceOf[HTMLInputElement].checked) {
@@ -109,23 +113,22 @@ import upickle.default.{read, write}
         }
       }
     }
-    <section class="main" style:display={ if (allTodos.length.bind == 0) "none" else "" }>
+    <section class="main" style={ if (allTodos.length.bind == 0) "display:none" else "" }>
       <input type="checkbox" id="toggle-all" class="toggle-all" checked={active.items.length.bind == 0} onclick={toggleAllClickHandler}/>
       <label for="toggle-all">Mark all as complete</label>
       <ul class="todo-list">{ for (todo <- route.state.bind.items) yield todoListItem(todo).bind }</ul>
     </section>
   }
 
-  @dom def footer: Binding[Node] = {
+  @html def footer: Binding[Node] = {
     def clearCompletedClickHandler = { _: Event =>
       allTodos.value --= (for (todo <- allTodos.value if todo.completed) yield todo)
     }
-    <footer class="footer" style:display={ if (allTodos.length.bind == 0) "none" else "" }>
+    <footer class="footer" style={ if (allTodos.length.bind == 0) "display:none" else "" }>
       <span class="todo-count">
         <strong>{ active.items.length.bind.toString }</strong> { if (active.items.length.bind == 1) "item" else "items"} left
       </span>
       <ul class="filters">{
-        import scalaz.std.vector.vectorInstance // Enable list comprehension in a @dom method
         for (todoList <- todoLists) yield {
           <li>
             <a href={ todoList.hash } class={ if (todoList == route.state.bind) "selected" else "" }>{ todoList.text }</a>
@@ -133,13 +136,13 @@ import upickle.default.{read, write}
         }
       }</ul>
       <button class="clear-completed" onclick={clearCompletedClickHandler}
-              style:visibility={if (completed.items.length.bind == 0) "hidden" else "visible"}>
+              style={if (completed.items.length.bind == 0) "visibility:hidden" else "visibility:visible"}>
         Clear completed
       </button>
     </footer>
   }
 
-  @dom def todoapp: Binding[BindingSeq[Node]] = {
+  @html def todoapp: BindingSeq[Node] = {
     <section class="todoapp">{ header.bind }{ mainSection.bind }{ footer.bind }</section>
     <footer class="info">
       <p>Double-click to edit a todo</p>
@@ -148,6 +151,6 @@ import upickle.default.{read, write}
     </footer>
   }
 
-  @JSExport def main(container: Node) = dom.render(container, todoapp)
+  @JSExport def main(container: Node) = html.render(container, todoapp)
 
 }
