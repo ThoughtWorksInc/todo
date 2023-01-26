@@ -1,32 +1,30 @@
 package com.thoughtworks.todo
 
-import org.lrng.binding.html
-import com.thoughtworks.binding.{Binding, Route}
-import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}
-import com.thoughtworks.binding.Binding.BindingInstances.monadSyntax._
+import com.yang_bo.html.*
+import com.thoughtworks.binding.{Binding, LatestEvent}
+import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars, Constants}
 
+import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
-import org.scalajs.dom.{Event, KeyboardEvent, window}
-import org.scalajs.dom.ext.{KeyCode, LocalStorage}
-import org.scalajs.dom.raw.{HTMLInputElement, Node}
-import upickle.default._
+import org.scalajs.dom.*
+import upickle.default.*
 
 @JSExportTopLevel("Main") object Main {
 
-  /** @note [[Todo]] is not a case class because we want to distinguish two [[Todo]]s with the same content */
-  final class Todo(val title: String, val completed: Boolean)
+  /** @note [[equals]] is overridden to distinguish two [[Todo]]s with the same content */
+  final case class Todo(title: String, completed: Boolean) {
+    override def equals(x: Any): Boolean = super.equals(x)
+  }
   object Todo {
     implicit val rw: ReadWriter[Todo] = macroRW
-    def apply(title: String, completed: Boolean) = new Todo(title, completed)
-    def unapply(todo: Todo) = Option((todo.title, todo.completed))
   }
 
   final case class TodoList(text: String, hash: String, items: BindingSeq[Todo])
 
   object Models {
     val LocalStorageName = "todos-binding.scala"
-    def load() = LocalStorage(LocalStorageName).toSeq.flatMap(read[Seq[Todo]](_))
-    def save(todos: collection.Seq[Todo]) = LocalStorage(LocalStorageName) = write(todos)
+    def load() = Option(window.localStorage.getItem(LocalStorageName)).toSeq.flatMap(read[Seq[Todo]](_))
+    def save(todos: collection.Seq[Todo]) = window.localStorage.setItem(LocalStorageName, write(todos))
 
     val allTodos = Vars[Todo](load(): _*)
 
@@ -39,16 +37,15 @@ import upickle.default._
     val active = TodoList("Active", "#/active", for (todo <- allTodos if !todo.completed) yield todo)
     val completed = TodoList("Completed", "#/completed", for (todo <- allTodos if todo.completed) yield todo)
     val todoLists = Vector(all, active, completed)
-    val route = Route.Hash(all)(new Route.Format[TodoList] {
-      override def unapply(hashText: String) = todoLists.find(_.hash == window.location.hash)
-      override def apply(state: TodoList): String = state.hash
-    })
-    route.watch()
+    val route = Binding {
+      LatestEvent.hashchange(window).bind
+      todoLists.find(_.hash == window.location.hash).getOrElse(all)
+    }
   }
   import Models._
 
-  @html def header: Binding[Node] = {
-    val keyDownHandler = { event: KeyboardEvent =>
+  def header: Binding[Node] = {
+    def keyDownHandler(event: KeyboardEvent) = {
       (event.currentTarget, event.keyCode) match {
         case (input: HTMLInputElement, KeyCode.Enter) =>
           input.value.trim match {
@@ -60,17 +57,17 @@ import upickle.default._
         case _ =>
       }
     }
-    <header class="header">
+    html"""<header class="header">
       <h1>todos</h1>
-      <input class="new-todo" autofocus={true} placeholder="What needs to be done?" onkeydown={keyDownHandler}/>
-    </header>
+      <input class="new-todo" autofocus placeholder="What needs to be done?" onkeydown=${keyDownHandler}/>
+    </header>"""
   }
 
-  @html def todoListItem(todo: Todo): Binding[Node] = {
+  def todoListItem(todo: Todo): Binding[Node] = {
     // onblur is not only triggered by user interaction, but also triggered by programmatic DOM changes.
     // In order to suppress this behavior, we have to replace the onblur event listener to a dummy handler before programmatic DOM changes.
     val suppressOnBlur = Var(false)
-    def submit = { event: Event =>
+    def submit(event: Event) = {
       suppressOnBlur.value = true
       editingTodo.value = None
       event.currentTarget.asInstanceOf[HTMLInputElement].value.trim match {
@@ -80,7 +77,7 @@ import upickle.default._
           allTodos.value(allTodos.value.indexOf(todo)) = Todo(trimmedTitle, todo.completed)
       }
     }
-    def keyDownHandler = { event: KeyboardEvent =>
+    def keyDownHandler(event: KeyboardEvent) = {
       event.keyCode match {
         case KeyCode.Escape =>
           suppressOnBlur.value = true
@@ -91,66 +88,66 @@ import upickle.default._
       }
     }
     def blurHandler = Binding[Event => Any] { if (suppressOnBlur.bind) Function.const(()) else submit }
-    def toggleHandler = { event: Event =>
+    def toggleHandler(event: Event) = {
       allTodos.value(allTodos.value.indexOf(todo)) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
     }
-    val editInput = <input id="editInput" class="edit" value={ todo.title } onblur={ blurHandler.bind } onkeydown={ keyDownHandler } />;
-    <li class={s"${if (todo.completed) "completed" else ""} ${if (editingTodo.bind.contains(todo)) "editing" else ""}"}>
+    val editInput = html"""<input class="edit" value=${ todo.title } onblur=${ blurHandler.bind } onkeydown=${ keyDownHandler } />"""
+    html"""<li class=${s"${if (todo.completed) "completed" else ""} ${if (editingTodo.bind.contains(todo)) "editing" else ""}"}>
       <div class="view">
-        <input class="toggle" type="checkbox" checked={todo.completed} onclick={toggleHandler}/>
-        <label ondblclick={ _: Event => editingTodo.value = Some(todo); editInput.value.focus() }>{ todo.title }</label>
-        <button class="destroy" onclick={ _: Event => allTodos.value.remove(allTodos.value.indexOf(todo)) }></button>
+        <input class="toggle" type="checkbox" checked=${todo.completed} onclick=${toggleHandler}/>
+        <label ondblclick=${ (_: Event) => editingTodo.value = Some(todo); editInput.value.focus() }>${ todo.title }</label>
+        <button class="destroy" onclick=${ (_: Event) => allTodos.value.remove(allTodos.value.indexOf(todo)) }></button>
       </div>
-      {editInput}
-    </li>
+      ${editInput}
+    </li>"""
   }
 
-  @html def mainSection: Binding[Node] = {
-    def toggleAllClickHandler = { event: Event =>
+  def mainSection: Binding[Node] = {
+    def toggleAllClickHandler(event: Event) = {
       for ((todo, i) <- allTodos.value.zipWithIndex) {
         if (todo.completed != event.currentTarget.asInstanceOf[HTMLInputElement].checked) {
           allTodos.value(i) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
         }
       }
     }
-    <section class="main" style={ if (allTodos.length.bind == 0) "display:none" else "" }>
-      <input type="checkbox" id="toggle-all" class="toggle-all" checked={active.items.length.bind == 0} onclick={toggleAllClickHandler}/>
+    html"""<section class="main" style=${ if (allTodos.length.bind == 0) "display:none" else "" }>
+      <input type="checkbox" id="toggle-all" class="toggle-all" checked=${active.items.length.bind == 0} onclick=${toggleAllClickHandler}/>
       <label for="toggle-all">Mark all as complete</label>
-      <ul class="todo-list">{ for (todo <- route.state.bind.items) yield todoListItem(todo).bind }</ul>
-    </section>
+      <ul class="todo-list">${ for (todo <- route.bind.items) yield todoListItem(todo).bind }</ul>
+    </section>"""
   }
 
-  @html def footer: Binding[Node] = {
-    def clearCompletedClickHandler = { _: Event =>
+  def footer: Binding[Node] = {
+    def clearCompletedClickHandler(event: MouseEvent) = {
       allTodos.value --= (for (todo <- allTodos.value if todo.completed) yield todo)
     }
-    <footer class="footer" style={ if (allTodos.length.bind == 0) "display:none" else "" }>
+    html"""<footer class="footer" style=${ if (allTodos.length.bind == 0) "display:none" else "" }>
       <span class="todo-count">
-        <strong>{ active.items.length.bind.toString }</strong> { if (active.items.length.bind == 1) "item" else "items"} left
+        <strong>${ active.items.length.bind.toString }</strong> ${ if (active.items.length.bind == 1) "item" else "items"} left
       </span>
-      <ul class="filters">{
+      <ul class="filters">${
         for (todoList <- todoLists) yield {
-          <li>
-            <a href={ todoList.hash } class={ if (todoList == route.state.bind) "selected" else "" }>{ todoList.text }</a>
-          </li>
+          html"""<li>
+            <a href=${ todoList.hash } class=${ if (todoList eq route.bind) "selected" else "" }>${ todoList.text }</a>
+          </li>"""
         }
       }</ul>
-      <button class="clear-completed" onclick={clearCompletedClickHandler}
-              style={if (completed.items.length.bind == 0) "visibility:hidden" else "visibility:visible"}>
+      <button class="clear-completed" onclick=$clearCompletedClickHandler
+              style=${if (completed.items.length.bind == 0) "visibility:hidden" else "visibility:visible"}>
         Clear completed
       </button>
-    </footer>
+    </footer>"""
   }
 
-  @html def todoapp: BindingSeq[Node] = {
-    <section class="todoapp">{ header.bind }{ mainSection.bind }{ footer.bind }</section>
+  def todoapp: BindingSeq[Node] = html"""
+    <section class="todoapp">${header.bind}${mainSection.bind}${footer.bind}</section>
     <footer class="info">
       <p>Double-click to edit a todo</p>
       <p>Written by <a href="https://github.com/atry">Yang Bo</a></p>
       <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
     </footer>
-  }
+  """
 
-  @JSExport def main(container: Node) = html.render(container, todoapp)
+  @JSExport def main(container: Element) = render(container, todoapp)
 
 }
