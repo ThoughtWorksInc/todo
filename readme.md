@@ -31,7 +31,7 @@ def render = {
  * Renders a bindable HTML DOM node into the body of current web page.
  */
 @JSExport def main(): Unit = {
-  html.render(document.body, render)
+  render(document.body, render)
 }
 ```
 
