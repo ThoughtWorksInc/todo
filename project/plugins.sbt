@@ -2,7 +2,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-js-engine" % "1.2.3")
 
 addSbtPlugin("com.thoughtworks.sbt-scala-js-map" % "sbt-scala-js-map" % "4.1.1")
 
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.12.0")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.13.0")
 
 addSbtPlugin(
   "com.thoughtworks.sbt-best-practice" % "sbt-best-practice" % "8.2.4"
