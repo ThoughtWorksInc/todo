@@ -19,10 +19,10 @@ only one source file, 154 lines of code!
  *  1. XHTML literals to create DOM nodes
  *  2. `xxx.bind` syntax, which makes this DOM tree keep updated whenever `xxx` changes.
  */
-def render = {
+def rootView = {
   val value = Var("")
   html"""<div>
-    <input onchange={ event: Event => dom.currentTarget.asInstanceOf[HTMLInputElement].value }/>
+    <input onchange={ (event: Event) => event.currentTarget.asInstanceOf[HTMLInputElement].value }/>
     Your input value is { value.bind }
   </div>"""
 }
@@ -31,7 +31,7 @@ def render = {
  * Renders a bindable HTML DOM node into the body of current web page.
  */
 @JSExport def main(): Unit = {
-  render(document.body, render)
+  render(document.body, rootView)
 }
 ```
 
