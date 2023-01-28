@@ -2,7 +2,7 @@
 
 [Binding.scala](https://github.com/ThoughtWorksInc/Binding.scala) is a data-binding framework for [Scala](http://www.scala-lang.org/), running on both JVM and [Scala.js](http://www.scala-js.org/).
 
-Binding.scala can be used as a **[reactive](https://en.wikipedia.org/wiki/Reactive_programming) web framework**.
+When combining with [html.scala](https://github.com/Atry/html.scala), Binding.scala can be used as a **[reactive](https://en.wikipedia.org/wiki/Reactive_programming) web framework**.
 It enables you use native XML literal syntax to create reactive DOM nodes,
 which are able to automatically change whenever the data source changes.
 
@@ -50,3 +50,4 @@ def rootView = {
 * [API documentation](https://javadoc.io/page/com.thoughtworks.binding/unidoc_2.11/latest/com/thoughtworks/binding/package.html)
 * [Other live DEMOs](https://thoughtworksinc.github.io/Binding.scala/)
 * [Chat on Gitter](https://gitter.im/ThoughtWorksInc/Binding.scala)
+* [html.scala](https://github.com/Atry/html.scala)
