@@ -11,10 +11,7 @@ import upickle.default.*
 
 @JSExportTopLevel("Main") object Main {
 
-  /** @note [[equals]] is overridden to distinguish two [[Todo]]s with the same content */
-  final case class Todo(title: String, completed: Boolean) {
-    override def equals(x: Any): Boolean = super.equals(x)
-  }
+  final case class Todo(title: String, completed: Boolean)
   object Todo {
     implicit val rw: ReadWriter[Todo] = macroRW
   }
@@ -72,9 +69,9 @@ import upickle.default.*
       editingTodo.value = None
       event.currentTarget.asInstanceOf[HTMLInputElement].value.trim match {
         case "" =>
-          allTodos.value.remove(allTodos.value.indexOf(todo))
+          allTodos.value.remove(allTodos.value.indexWhere(todo.eq))
         case trimmedTitle =>
-          allTodos.value(allTodos.value.indexOf(todo)) = Todo(trimmedTitle, todo.completed)
+          allTodos.value(allTodos.value.indexWhere(todo.eq)) = Todo(trimmedTitle, todo.completed)
       }
     }
     def keyDownHandler(event: KeyboardEvent) = {
@@ -89,14 +86,14 @@ import upickle.default.*
     }
     def blurHandler = Binding[Event => Any] { if (suppressOnBlur.bind) Function.const(()) else submit }
     def toggleHandler(event: Event) = {
-      allTodos.value(allTodos.value.indexOf(todo)) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
+      allTodos.value(allTodos.value.indexWhere(todo.eq)) = Todo(todo.title, event.currentTarget.asInstanceOf[HTMLInputElement].checked)
     }
     val editInput = html"""<input class="edit" value=${ todo.title } onblur=${ blurHandler.bind } onkeydown=${ keyDownHandler } />"""
-    html"""<li class=${s"${if (todo.completed) "completed" else ""} ${if (editingTodo.bind.contains(todo)) "editing" else ""}"}>
+    html"""<li class=${s"${if (todo.completed) "completed" else ""} ${if (editingTodo.bind.exists(todo.eq)) "editing" else ""}"}>
       <div class="view">
         <input class="toggle" type="checkbox" checked=${todo.completed} onclick=${toggleHandler}/>
         <label ondblclick=${ (_: Event) => editingTodo.value = Some(todo); editInput.value.focus() }>${ todo.title }</label>
-        <button class="destroy" onclick=${ (_: Event) => allTodos.value.remove(allTodos.value.indexOf(todo)) }></button>
+        <button class="destroy" onclick=${ (_: Event) => allTodos.value.remove(allTodos.value.indexWhere(todo.eq)) }></button>
       </div>
       ${editInput}
     </li>"""
