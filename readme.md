@@ -15,8 +15,8 @@ only one source file, 154 lines of code!
 /**
  * Returns a bindable HTML DOM tree.
  *
- * The `html"""..."""` interpolation enable two magics:
- *  1. XHTML literals to create DOM nodes
+ * The `html"""..."""` interpolation enables two magics:
+ *  1. HTML literals to create DOM nodes
  *  2. `xxx.bind` syntax, which makes this DOM tree keep updated whenever `xxx` changes.
  */
 def rootView = {
