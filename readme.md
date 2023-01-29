@@ -22,8 +22,8 @@ only one source file, 154 lines of code!
 def rootView = {
   val value = Var("")
   html"""<div>
-    <input onchange={ (event: Event) => event.currentTarget.asInstanceOf[HTMLInputElement].value }/>
-    Your input value is { value.bind }
+    <input onchange=${ (event: Event) => event.currentTarget.asInstanceOf[HTMLInputElement].value }/>
+    Your input value is ${ value.bind }
   </div>"""
 }
 
