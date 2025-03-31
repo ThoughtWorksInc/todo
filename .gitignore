@@ -183,6 +183,13 @@ local.properties
 # Files created for deployment
 target/
 local.sbt
+secret/
+.metals/
+.bloop/
+metals.sbt
+.bsp/
+.vscode/launch.json
+*.scala.semanticdb
 
 # JS files for testing
 *-test-*opt.js
