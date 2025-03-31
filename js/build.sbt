@@ -1,6 +1,6 @@
 enablePlugins(ScalaJSPlugin)
 
-libraryDependencies += "com.yang-bo" %%% "html" % "3.0.1"
+libraryDependencies += "com.yang-bo" %%% "html" % "3.0.3"
 
 libraryDependencies += "com.thoughtworks.binding" %%% "binding" % "12.2.0"
 
