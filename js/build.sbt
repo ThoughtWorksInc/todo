@@ -8,7 +8,7 @@ libraryDependencies += "com.thoughtworks.binding" %%% "bindable" % "3.0.0"
 
 libraryDependencies += "com.thoughtworks.binding" %%% "latestevent" % "2.0.0"
 
-libraryDependencies += "com.lihaoyi" %%% "upickle" % "2.0.0"
+libraryDependencies += "com.lihaoyi" %%% "upickle" % "4.1.0"
 
 scalacOptions += "-Ymacro-annotations"
 
